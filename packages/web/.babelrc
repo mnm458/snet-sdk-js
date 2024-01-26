@@ -4,10 +4,19 @@
       "@babel/preset-env",
       {
         "targets": {
-          "node": "current"
-        }
+          "node": "current", // Targeting current Node.js version,
+          "esmodules": true
+        },
+        "modules": false // Avoids module transformations
       }
     ]
   ],
-  "exclude": ["./src/proto"]
+  "ignore": ["./src/_example"],
+  "exclude": ["./src/proto"],
+  "plugins": [
+    "babel-plugin-add-import-extension",
+    "@babel/plugin-syntax-import-assertions"
+    // Add any specific plugins if required
+  ]
 }
+//MHKCHANGED

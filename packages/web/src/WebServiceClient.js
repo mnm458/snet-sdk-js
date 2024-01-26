@@ -5,7 +5,7 @@ import {
   PaymentChannelStateServiceClient,
 } from "./proto/state_service_pb_service";
 import { Model, ModelClient } from "./proto/training_pb_service";
-import training_pb from "./proto/training_pb";
+import { ModelDetails, AuthorizationDetails } from "./proto/training_pb";
 import { BaseServiceClient, logger } from "./sdk-core";
 
 class WebServiceClient extends BaseServiceClient {
@@ -95,14 +95,14 @@ class WebServiceClient extends BaseServiceClient {
   }
 
   _generatePaymentChannelStateServiceClient() {
-    logger.debug("Creating PaymentChannelStateService client", {
-      tags: ["gRPC"],
-    });
+    // logger.debug("Creating PaymentChannelStateService client", {
+    //   tags: ["gRPC"],
+    // });
     const serviceEndpoint = this._getServiceEndpoint();
-    logger.debug(
-      `PaymentChannelStateService pointing to ${serviceEndpoint.host}, `,
-      { tags: ["gRPC"] }
-    );
+    // logger.debug(
+    //   `PaymentChannelStateService pointing to ${serviceEndpoint.host}, `,
+    //   { tags: ["gRPC"] }
+    // );
     const host = `${serviceEndpoint.protocol}//${serviceEndpoint.host}`;
     return new PaymentChannelStateServiceClient(host);
   }
@@ -112,12 +112,12 @@ class WebServiceClient extends BaseServiceClient {
   }
 
   _generateModelServiceClient() {
-    logger.debug("Creating TrainingStateService client", { tags: ["gRPC"] });
+    // logger.debug("Creating TrainingStateService client", { tags: ["gRPC"] });
     const serviceEndpoint = this._getServiceEndpoint();
-    logger.debug(
-      `TrainingChannelStateService pointing to ${serviceEndpoint.host}, `,
-      { tags: ["gRPC"] }
-    );
+    // logger.debug(
+    //   `TrainingChannelStateService pointing to ${serviceEndpoint.host}, `,
+    //   { tags: ["gRPC"] }
+    // );
     const host = `${serviceEndpoint.protocol}//${serviceEndpoint.host}`;
     return new ModelClient(host);
   }
@@ -126,9 +126,9 @@ class WebServiceClient extends BaseServiceClient {
     return Model.get_all_models.requestType;
   }
   _getAuthorizationRequestMethodDescriptor() {
-    return training_pb.AuthorizationDetails;
+    return AuthorizationDetails;
   }
-  
+
   _getCreateModelRequestMethodDescriptor() {
     return Model.create_model.requestType;
   }
@@ -140,9 +140,9 @@ class WebServiceClient extends BaseServiceClient {
   _getUpdateModelRequestMethodDescriptor() {
     return Model.update_model_access.requestType;
   }
-      
- _getModelDetailsRequestMethodDescriptor() {
-    return training_pb.ModelDetails;
+
+  _getModelDetailsRequestMethodDescriptor() {
+    return ModelDetails;
   }
 }
 

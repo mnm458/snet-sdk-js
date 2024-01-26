@@ -1,4 +1,4 @@
-import { logger } from '../sdk-core';
+import { logger } from "../sdk-core";
 
 class BasePaidPaymentStrategy {
   /**
@@ -24,34 +24,51 @@ class BasePaidPaymentStrategy {
     const serviceCallPrice = this._getPrice();
     const extendedChannelFund = serviceCallPrice * this._callAllowance;
     const mpeBalance = await account.escrowBalance();
-    const defaultExpiration = await this._serviceClient.defaultChannelExpiration();
+    const defaultExpiration =
+      await this._serviceClient.defaultChannelExpiration();
     const extendedExpiry = defaultExpiration + this._blockOffset;
 
     let selectedPaymentChannel;
-    if(paymentChannels.length < 1) {
-      if(serviceCallPrice > mpeBalance) {
-        selectedPaymentChannel = await this._serviceClient.depositAndOpenChannel(serviceCallPrice, extendedExpiry);
+    if (paymentChannels.length < 1) {
+      if (serviceCallPrice > mpeBalance) {
+        selectedPaymentChannel =
+          await this._serviceClient.depositAndOpenChannel(
+            serviceCallPrice,
+            extendedExpiry
+          );
       } else {
-        selectedPaymentChannel = await this._serviceClient.openChannel(serviceCallPrice, extendedExpiry);
+        selectedPaymentChannel = await this._serviceClient.openChannel(
+          serviceCallPrice,
+          extendedExpiry
+        );
       }
     } else {
       selectedPaymentChannel = paymentChannels[0];
     }
 
-    const hasSufficientFunds = this._doesChannelHaveSufficientFunds(selectedPaymentChannel, serviceCallPrice);
-    const isValid = this._isValidChannel(selectedPaymentChannel, defaultExpiration);
-    if(hasSufficientFunds && !isValid) {
+    const hasSufficientFunds = this._doesChannelHaveSufficientFunds(
+      selectedPaymentChannel,
+      serviceCallPrice
+    );
+    const isValid = this._isValidChannel(
+      selectedPaymentChannel,
+      defaultExpiration
+    );
+    if (hasSufficientFunds && !isValid) {
       await selectedPaymentChannel.extendExpiry(extendedExpiry);
-    } else if(!hasSufficientFunds && isValid) {
+    } else if (!hasSufficientFunds && isValid) {
       await selectedPaymentChannel.addFunds(extendedChannelFund);
-    } else if(!hasSufficientFunds && !isValid) {
-      await selectedPaymentChannel.extendAndAddFunds(extendedExpiry, extendedChannelFund);
+    } else if (!hasSufficientFunds && !isValid) {
+      await selectedPaymentChannel.extendAndAddFunds(
+        extendedExpiry,
+        extendedChannelFund
+      );
     }
     return selectedPaymentChannel;
   }
 
   _getPrice() {
-    logger.error('_getPrice must be implemented in the sub classes');
+    logger.error("_getPrice must be implemented in the sub classes");
   }
 
   /**

@@ -1,14 +1,12 @@
 // package: escrow
 // file: token_service.proto
 
-var token_service_pb = require("./token_service_pb");
-var grpc = require("@improbable-eng/grpc-web").grpc;
+import * as token_service_pb from "./token_service_pb";
+import { grpc } from "@improbable-eng/grpc-web";
 
-var TokenService = (function () {
-  function TokenService() {}
-  TokenService.serviceName = "escrow.TokenService";
-  return TokenService;
-}());
+class TokenService {
+  static serviceName = "escrow.TokenService";
+}
 
 TokenService.GetToken = {
   methodName: "GetToken",
@@ -16,46 +14,47 @@ TokenService.GetToken = {
   requestStream: false,
   responseStream: false,
   requestType: token_service_pb.TokenRequest,
-  responseType: token_service_pb.TokenReply
+  responseType: token_service_pb.TokenReply,
 };
 
-exports.TokenService = TokenService;
+export { TokenService };
 
-function TokenServiceClient(serviceHost, options) {
-  this.serviceHost = serviceHost;
-  this.options = options || {};
+class TokenServiceClient {
+  constructor(serviceHost, options) {
+    this.serviceHost = serviceHost;
+    this.options = options || {};
+  }
+
+  getToken(requestMessage, metadata, callback) {
+    if (arguments.length === 2) {
+      callback = arguments[1];
+    }
+    const client = grpc.unary(TokenService.GetToken, {
+      request: requestMessage,
+      host: this.serviceHost,
+      metadata: metadata,
+      transport: this.options.transport,
+      debug: this.options.debug,
+      onEnd: (response) => {
+        if (callback) {
+          if (response.status !== grpc.Code.OK) {
+            const err = new Error(response.statusMessage);
+            err.code = response.status;
+            err.metadata = response.trailers;
+            callback(err, null);
+          } else {
+            callback(null, response.message);
+          }
+        }
+      },
+    });
+    return {
+      cancel: () => {
+        callback = null;
+        client.close();
+      },
+    };
+  }
 }
 
-TokenServiceClient.prototype.getToken = function getToken(requestMessage, metadata, callback) {
-  if (arguments.length === 2) {
-    callback = arguments[1];
-  }
-  var client = grpc.unary(TokenService.GetToken, {
-    request: requestMessage,
-    host: this.serviceHost,
-    metadata: metadata,
-    transport: this.options.transport,
-    debug: this.options.debug,
-    onEnd: function (response) {
-      if (callback) {
-        if (response.status !== grpc.Code.OK) {
-          var err = new Error(response.statusMessage);
-          err.code = response.status;
-          err.metadata = response.trailers;
-          callback(err, null);
-        } else {
-          callback(null, response.message);
-        }
-      }
-    }
-  });
-  return {
-    cancel: function () {
-      callback = null;
-      client.close();
-    }
-  };
-};
-
-exports.TokenServiceClient = TokenServiceClient;
-
+export { TokenServiceClient };

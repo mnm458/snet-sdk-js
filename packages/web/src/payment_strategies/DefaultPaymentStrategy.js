@@ -1,6 +1,6 @@
-import PrepaidPaymentStrategy from './PrepaidPaymentStrategy';
-import ConcurrencyManager from '../ConcurrencyManager';
-import PaidCallPaymentStrategy from './PaidCallPaymentStrategy';
+import PrepaidPaymentStrategy from "./PrepaidPaymentStrategy";
+import ConcurrencyManager from "../ConcurrencyManager";
+import PaidCallPaymentStrategy from "./PaidCallPaymentStrategy";
 
 class DefaultPaymentStrategy {
   /**
@@ -18,9 +18,15 @@ class DefaultPaymentStrategy {
    */
   async getPaymentMetadata(serviceClient) {
     let metadata;
-    if(serviceClient.concurrencyFlag) {
-      const concurrencyManager = new ConcurrencyManager(this._concurrentCalls, serviceClient);
-      const paymentStrategy = new PrepaidPaymentStrategy(serviceClient, concurrencyManager);
+    if (serviceClient.concurrencyFlag) {
+      const concurrencyManager = new ConcurrencyManager(
+        this._concurrentCalls,
+        serviceClient
+      );
+      const paymentStrategy = new PrepaidPaymentStrategy(
+        serviceClient,
+        concurrencyManager
+      );
       metadata = await paymentStrategy.getPaymentMetadata();
     } else {
       const paymentStrategy = new PaidCallPaymentStrategy(serviceClient);

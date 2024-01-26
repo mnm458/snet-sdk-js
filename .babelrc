@@ -3,10 +3,18 @@
     [
       "@babel/preset-env",
       {
-        "targets": {
-          "node": "current"
-        }
+        "corejs": 3,
+     
       }
     ]
+  ],
+  "ignore": ["./src/_example"],
+  "exclude": ["./src/proto"],
+  "plugins": [
+    "babel-plugin-add-import-extension",
+    // "@babel/plugin-syntax-import-assertions",
+    "@babel/plugin-syntax-import-attributes"
+    // Add any specific plugins if required
   ]
 }
+//MHKCHANGED

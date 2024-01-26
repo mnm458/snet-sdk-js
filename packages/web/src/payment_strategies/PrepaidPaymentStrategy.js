@@ -1,5 +1,5 @@
-import BasePaidPaymentStrategy from './BasePaidPaymentStrategy';
-import { EncodingUtils } from '../core';
+import BasePaidPaymentStrategy from "./BasePaidPaymentStrategy";
+import EncodingUtils from "../core/src/utils/encodingUtils";
 
 class PrepaidPaymentStrategy extends BasePaidPaymentStrategy {
   /**
@@ -8,7 +8,12 @@ class PrepaidPaymentStrategy extends BasePaidPaymentStrategy {
    * @param {number} blockOffset
    * @param {number} callAllowance
    */
-  constructor(serviceClient, concurrencyManager, blockOffset = 240, callAllowance = 1) {
+  constructor(
+    serviceClient,
+    concurrencyManager,
+    blockOffset = 240,
+    callAllowance = 1
+  ) {
     super(serviceClient, blockOffset, callAllowance);
     this._encodingUtils = new EncodingUtils();
     this._concurrencyManager = concurrencyManager;
@@ -20,12 +25,17 @@ class PrepaidPaymentStrategy extends BasePaidPaymentStrategy {
   async getPaymentMetadata() {
     const channel = await this._selectChannel();
     const concurrentCallsPrice = this._getPrice();
-    const token = await this._concurrencyManager.getToken(channel, concurrentCallsPrice);
+    const token = await this._concurrencyManager.getToken(
+      channel,
+      concurrentCallsPrice
+    );
     const tokenBytes = this._encodingUtils.utfStringToBytes(token);
-    const metadata = [{ 'snet-payment-type': 'prepaid-call' },
-      { 'snet-payment-channel-id': `${channel.channelId}` },
-      { 'snet-payment-channel-nonce': `${channel.state.nonce}` },
-      { 'snet-prepaid-auth-token-bin': tokenBytes.toString('base64') }];
+    const metadata = [
+      { "snet-payment-type": "prepaid-call" },
+      { "snet-payment-channel-id": `${channel.channelId}` },
+      { "snet-payment-channel-nonce": `${channel.state.nonce}` },
+      { "snet-prepaid-auth-token-bin": tokenBytes.toString("base64") },
+    ];
     return metadata;
   }
 
@@ -35,8 +45,12 @@ class PrepaidPaymentStrategy extends BasePaidPaymentStrategy {
    * @private
    */
   _getPrice() {
-    return this._serviceClient._pricePerServiceCall.toNumber() * this._concurrencyManager.concurrentCalls;
+    return (
+      this._serviceClient._pricePerServiceCall.toNumber() *
+      this._concurrencyManager.concurrentCalls
+    );
   }
 }
 
 export default PrepaidPaymentStrategy;
+//MHKCHANGED

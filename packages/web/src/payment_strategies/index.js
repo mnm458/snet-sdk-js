@@ -1,1 +1,1 @@
-export {default as DefaultPaymentStrategy} from './DefaultPaymentStrategy';
+export { default as DefaultPaymentStrategy } from "./DefaultPaymentStrategy";
