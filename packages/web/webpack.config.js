@@ -1,31 +1,3 @@
-// const path = require("path");
-
-// module.exports = {
-//   entry: path.resolve(__dirname, "./src/index.js"),
-//   output: {
-//     path: path.resolve(__dirname, "dist"),
-//     filename: "index_bundle.js",
-//   },
-//   resolve: {
-//     symlinks: true,
-//     fallback: {
-//       buffer: require.resolve("buffer/"),
-//       crypto: require.resolve("crypto-browserify"),
-//       url: require.resolve("url/"),
-//     },
-//   },
-//   module: {
-//     rules: [
-//       {
-//         test: /\.(js)$/,
-//         exclude: /node_modules/,
-//         use: "babel-loader",
-//       },
-//     ],
-//   },
-//   mode: "development",
-// };
-
 const path = require("path");
 const webpack = require("webpack");
 
@@ -41,7 +13,7 @@ module.exports = {
   plugins: [
     new webpack.ProvidePlugin({
       Buffer: ["buffer", "Buffer"],
-      process: "process/browser",
+      process: ["process", "process/browser"],
     }),
 
     // new webpack.DefinePlugin({
